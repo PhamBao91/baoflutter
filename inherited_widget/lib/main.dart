@@ -27,18 +27,14 @@ class MyApp extends StatelessWidget {
 
 class TheStatefulWidget extends StatefulWidget {
   final Widget child;
-
   TheStatefulWidget({Key key, @required this.child}):super(key: key);
-
   /// Add listener with InheritedWidget
   static TheStatefulWidgetState of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<TheInheritedWidget>().data;
   }
-
   @override
   TheStatefulWidgetState createState() => TheStatefulWidgetState();
 }
-
 class TheStatefulWidgetState extends State<TheStatefulWidget> {
   bool _changed = false;
   bool get changed => _changed;
@@ -48,7 +44,6 @@ class TheStatefulWidgetState extends State<TheStatefulWidget> {
       _changed = !_changed;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return TheInheritedWidget(
@@ -70,13 +65,11 @@ class TheInheritedWidget extends InheritedWidget{
     @required this.data
   }) : super(key: key, child: child);
 
-
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) {
     // TODO: implement updateShouldNotify
     return true;
   }
-
 
 }
 
@@ -100,6 +93,7 @@ class TheStackWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    // Không cần stateful nhưng vẫn có thể đổi đc state
     return Stack(
       children: [
         ColorBox(),
@@ -130,11 +124,13 @@ class _LableBoxState extends State<LableBox> {
   }
   @override
   Widget build(BuildContext context) {
-    return changed ? Text("Màu Đỏ", style: TextStyle(
-        color: Colors.white
-    ),) : Text("Màu Xanh", style: TextStyle(
-        color: Colors.white
-    ),);
+    return Center(
+      child: changed ? Text("Màu Đỏ", style: TextStyle(
+          color: Colors.white
+      ),) : Text("Màu Xanh", style: TextStyle(
+          color: Colors.white
+      ),),
+    );
 
   }
 }
@@ -143,10 +139,8 @@ class ColorBox extends StatefulWidget {
   @override
   _ColorBoxState createState() => _ColorBoxState();
 }
-
 class _ColorBoxState extends State<ColorBox> {
   bool changed ;
-
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
@@ -154,21 +148,22 @@ class _ColorBoxState extends State<ColorBox> {
     TheStatefulWidgetState data = TheStatefulWidget.of(context);
     changed = data.changed;
   }
-
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Container(
-        height: 200,
-        width: 200,
-        decoration: BoxDecoration(
-            color: changed ? Colors.red: Colors.blue
+    return Center(
+      child: GestureDetector(
+        child: Container(
+          height: 200,
+          width: 200,
+          decoration: BoxDecoration(
+              color: changed ? Colors.red: Colors.blue
+          ),
         ),
+        onTap: (){
+          // Use function of parentWidget - TheStatefulWidget
+          TheStatefulWidget.of(context).changeColor();
+        },
       ),
-      onTap: (){
-        // Use function of parentWidget - TheStatefulWidget
-        TheStatefulWidget.of(context).changeColor();
-      },
     );
   }
 }
